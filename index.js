@@ -26,7 +26,9 @@ export async function connectToMongoDB() {
   }
 }
 
-await connectToMongoDB()
+const mongoClient= await connectToMongoDB()
+const db = mongoClient.db("ImpactConnect")
+const eventDataCollection = db.collection("eventData")
 
 
 // ---------------------
@@ -34,7 +36,19 @@ app.listen(PORT, ()=>{
     console.log(`server is running at ${PORT}`);
 })
 
-// localhost:8000
+// http://localhost:8000
+
+
+// ---------------------------------
+app.post('/form-datas', async(req,res)=>{
+    const data = req.body
+
+    const result = await eventDataCollection.insertOne(data)
+    res.send(result)
+})
+
+
+// -------------------------
 app.get('/',(req,res)=>{
     res.send({message:'server runningg'})
 })
