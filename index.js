@@ -1,14 +1,19 @@
 import express from 'express'
 import { MongoClient } from 'mongodb';
 import 'dotenv/config'
+import cors from 'cors'
 
-
+// !--------------!
 const app = express()
 const PORT = 8000
 
+// !----------------!
+app.use(cors())
+app.use(express.json())
 
 
 
+// !---------------------!
 const client = new MongoClient(process.env.MONGODB_URl);
 
 export async function connectToMongoDB() {
@@ -24,7 +29,7 @@ export async function connectToMongoDB() {
 await connectToMongoDB()
 
 
-
+// ---------------------
 app.listen(PORT, ()=>{
     console.log(`server is running at ${PORT}`);
 })
