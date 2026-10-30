@@ -48,6 +48,14 @@ app.post('/form-datas', async(req,res)=>{
 })
 
 
+// ------------------------------
+// http://localhost:8000/allEvents
+app.get('/allEvents',async(req,res)=>{
+    const result = await eventDataCollection.find().toArray()
+    res.send(result)
+})
+
+
 // -------------------------
 app.get('/',(req,res)=>{
     res.send({message:'server runningg'})
