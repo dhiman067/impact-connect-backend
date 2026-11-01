@@ -29,6 +29,7 @@ export async function connectToMongoDB() {
 const mongoClient= await connectToMongoDB()
 const db = mongoClient.db("ImpactConnect")
 const eventDataCollection = db.collection("eventData")
+const manageEventDataCollection = db.collection("manageEvent")
 
 
 // ---------------------
@@ -64,6 +65,17 @@ app.get('/allEvents/:id',async(req,res)=>{
   const result = await eventDataCollection.findOne(query)
   res.send(result)
 })
+
+
+
+// --------------------------
+// http://localhost:8000/manageEvent
+app.post('/manageEvent', async(req,res)=>{
+const data = req.body
+const result = await manageEventDataCollection.insertOne(data)
+res.send(result)
+})
+
 
 // -------------------------
 app.get('/',(req,res)=>{
