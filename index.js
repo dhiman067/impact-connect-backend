@@ -93,6 +93,14 @@ app.post('/joinedEvent', async(req,res)=>{
   res.send(result)
 })
 
+// --------------------------
+// http://localhost:8000/joinedEvent/email
+app.get('/joinedEvent/:email' , async(req,res)=>{
+  const email = req.params.email
+  const result = await joinEventDataCollection.find({userEmail:email}).toArray()
+  res.send(result)
+})
+
 
 // -------------------------
 app.get('/',(req,res)=>{
