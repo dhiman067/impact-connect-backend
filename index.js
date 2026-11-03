@@ -30,6 +30,7 @@ const mongoClient= await connectToMongoDB()
 const db = mongoClient.db("ImpactConnect")
 const eventDataCollection = db.collection("eventData")
 const manageEventDataCollection = db.collection("manageEvent")
+const joinEventDataCollection = db.collection("joinedEvent")
 
 
 // ---------------------
@@ -81,6 +82,14 @@ res.send(result)
 app.get('/manageEvent/:email' , async(req,res)=>{
   const email = req.params.email
   const result = await manageEventDataCollection.find({userEmail:email}).toArray()
+  res.send(result)
+})
+
+// ----------------------
+// http://localhost:8000/joinedEvent
+app.post('/joinedEvent', async(req,res)=>{
+  const data = req.body
+  const result = await joinEventDataCollection.insertOne(data)
   res.send(result)
 })
 
