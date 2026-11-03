@@ -62,7 +62,7 @@ app.get('/allEvents',async(req,res)=>{
 // http://localhost:8000/allEvents/id
 app.get('/allEvents/:id',async(req,res)=>{
   const id = req.params.id
-  const query = {_id: new ObjectId(id)}
+  const query = {eventId: id}
   const result = await eventDataCollection.findOne(query)
   res.send(result)
 })
@@ -71,11 +71,18 @@ app.get('/allEvents/:id',async(req,res)=>{
 
 // --------------------------
 // http://localhost:8000/manageEvent
-app.post('/manageEvent', async(req,res)=>{
-const data = req.body
-const result = await manageEventDataCollection.insertOne(data)
-res.send(result)
-})
+// app.post('/manageEvent', async(req,res)=>{
+// const data = req.body
+// const result = await manageEventDataCollection.insertOne(data)
+// res.send(result)
+// })
+app.post("/manageEvent", async (req, res) => {
+  const result = await manageEventDataCollection.insertOne(req.body);
+
+  res.status(201).json({
+    eventId: result.insertedId.toString(),
+  });
+});
 
 // ---------------------
 // http://localhost:8000/manageEvent/email
