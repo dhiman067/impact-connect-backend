@@ -101,6 +101,14 @@ app.patch('/allEvents/:id' , async(req,res)=>{
 })
 
 
+// --------------------------------------
+app.delete('/allEvents/:id', async(req,res)=>{
+  const {id} = req.params
+  const result = await eventDataCollection.deleteOne({_id: new ObjectId(id)})
+  res.send(result)
+})
+
+
 
 // --------------------------
 // http://localhost:8000/joinedEvent/email
