@@ -29,7 +29,7 @@ export async function connectToMongoDB() {
 const mongoClient= await connectToMongoDB()
 const db = mongoClient.db("ImpactConnect")
 const eventDataCollection = db.collection("eventData")
-const manageEventDataCollection = db.collection("manageEvent")
+// const manageEventDataCollection = db.collection("manageEvent")
 const joinEventDataCollection = db.collection("joinedEvent")
 
 
@@ -62,33 +62,20 @@ app.get('/allEvents',async(req,res)=>{
 // http://localhost:8000/allEvents/id
 app.get('/allEvents/:id',async(req,res)=>{
   const id = req.params.id
-  const query = {eventId: id}
+  const query = {_id: new ObjectId(id)}
   const result = await eventDataCollection.findOne(query)
   res.send(result)
 })
 
 
 
-// --------------------------
-// http://localhost:8000/manageEvent
-// app.post('/manageEvent', async(req,res)=>{
-// const data = req.body
-// const result = await manageEventDataCollection.insertOne(data)
-// res.send(result)
-// })
-app.post("/manageEvent", async (req, res) => {
-  const result = await manageEventDataCollection.insertOne(req.body);
 
-  res.status(201).json({
-    eventId: result.insertedId.toString(),
-  });
-});
 
 // ---------------------
 // http://localhost:8000/manageEvent/email
 app.get('/manageEvent/:email' , async(req,res)=>{
   const email = req.params.email
-  const result = await manageEventDataCollection.find({userEmail:email}).toArray()
+  const result = await eventDataCollection.find({userEmail:email}).toArray()
   res.send(result)
 })
 
@@ -100,6 +87,21 @@ app.post('/joinedEvent', async(req,res)=>{
   res.send(result)
 })
 
+
+// --------------------------------
+// http://localhost:8000/allEvents/:id
+app.patch('/allEvents/:id' , async(req,res)=>{
+  const {id} = req.params
+  const updatedData = req.body
+  const result = await eventDataCollection.updateOne(
+    {_id: new ObjectId(id)},
+    {$set: updatedData}
+  )
+  res.send(result)
+})
+
+
+
 // --------------------------
 // http://localhost:8000/joinedEvent/email
 app.get('/joinedEvent/:email' , async(req,res)=>{
@@ -107,6 +109,8 @@ app.get('/joinedEvent/:email' , async(req,res)=>{
   const result = await joinEventDataCollection.find({userEmail:email}).toArray()
   res.send(result)
 })
+
+
 
 
 // -------------------------
