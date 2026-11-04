@@ -57,6 +57,12 @@ app.get('/allEvents',async(req,res)=>{
     res.send(result)
 })
 
+// ----------------------------------
+// http://localhost:8000/featured-allEvents
+app.get('/featured-allEvents',async(req,res)=>{
+  const result = await eventDataCollection.find().limit(6).toArray()
+  res.send(result)
+})
 
 // --------------------------
 // http://localhost:8000/allEvents/id
