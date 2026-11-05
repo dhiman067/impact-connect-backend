@@ -33,23 +33,7 @@ const eventDataCollection = db.collection("eventData")
 // const manageEventDataCollection = db.collection("manageEvent")
 const joinEventDataCollection = db.collection("joinedEvent")
 
-const verifyApi = async (req, res, next) => {
-  const authHeader = req.headers.authorization
-  if (!authHeader) {
-    return res.status(401).send({ msg: "Unauthorized" })
-  }
 
-  const token = authHeader.split(" ")[1]
-  if (!token) {
-    return res.status(401).send({ msg: "Unauthorized" })
-  }
-  const JWKS = createRemoteJWKSet(new URL(`${process.env.CLIENT_URL}/api/auth/jwks`))
-
-  const { payload } = await jwtVerify(token, JWKS)
-  console.log(payload);
-
-  next()
-}
 
 
 // ---------------------
@@ -98,7 +82,7 @@ app.get('/allEvents/:id',  async (req, res) => {
 
 // ---------------------
 // http://localhost:8000/manageEvent/email
-app.get('/manageEvent/:email', verifyApi, async (req, res) => {
+app.get('/manageEvent/:email', async (req, res) => {
   const email = req.params.email
   const result = await eventDataCollection.find({ userEmail: email }).toArray()
   res.send(result)
@@ -137,7 +121,7 @@ app.delete('/allEvents/:id', async (req, res) => {
 
 // --------------------------
 // http://localhost:8000/joinedEvent/email
-app.get('/joinedEvent/:email', verifyApi, async (req, res) => {
+app.get('/joinedEvent/:email', async (req, res) => {
   const email = req.params.email
   const result = await joinEventDataCollection.find({ userEmail: email }).toArray()
   res.send(result)
