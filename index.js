@@ -150,3 +150,5 @@ app.get('/joinedEvent/:email', verifyApi, async (req, res) => {
 app.get('/', (req, res) => {
   res.send({ message: 'server runningg' })
 })
+
+export default app
