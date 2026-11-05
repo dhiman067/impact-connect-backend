@@ -34,6 +34,29 @@ const eventDataCollection = db.collection("eventData")
 const joinEventDataCollection = db.collection("joinedEvent")
 
 
+const verifyToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).send({ msg: "Unauthorized!" });
+  }
+  const token = authHeader.split(" ")[1];
+  if (!token) {
+    return res.status(401).send({ msg: "Unauthorized!" });
+  }
+
+  const JWKS = createRemoteJWKSet(
+    new URL(`${process.env.CLIENT_URL}/api/auth/jwks`),
+  );
+
+  try { 
+    const { payload } = await jwtVerify(token, JWKS);
+    next();
+  } catch (error) {
+    return res.status(500).send({ msg: "Server Error!" });
+  }
+};
+
+
 
 
 // ---------------------
@@ -82,7 +105,7 @@ app.get('/allEvents/:id',  async (req, res) => {
 
 // ---------------------
 // http://localhost:8000/manageEvent/email
-app.get('/manageEvent/:email', async (req, res) => {
+app.get('/manageEvent/:email', verifyToken, async (req, res) => {
   const email = req.params.email
   const result = await eventDataCollection.find({ userEmail: email }).toArray()
   res.send(result)
@@ -92,29 +115,10 @@ app.get('/manageEvent/:email', async (req, res) => {
 // http://localhost:8000/joinedEvent
 app.post('/joinedEvent', async (req, res) => {
   const data = req.body
-
-  if (!data || typeof data !== 'object' || Array.isArray(data)) {
-    return res.status(400).send({ message: 'A valid JSON object is required' })
-  }
-
-  try {
-    const result = await joinEventDataCollection.insertOne(data)
-    res.status(201).send(result)
-  } catch (error) {
-    console.error('Failed to save joined event:', error)
-    res.status(500).send({ message: 'Failed to save joined event' })
-  }
+  const result = await joinEventDataCollection.insertOne(data)
+  res.send(result)
 })
 
-app.get('/joinedEvent', async (_req, res) => {
-  try {
-    const result = await joinEventDataCollection.find().toArray()
-    res.send(result)
-  } catch (error) {
-    console.error('Failed to load joined events:', error)
-    res.status(500).send({ message: 'Failed to load joined events' })
-  }
-})
 
 // --------------------------------
 // http://localhost:8000/allEvents/:id
@@ -140,16 +144,10 @@ app.delete('/allEvents/:id', async (req, res) => {
 
 // --------------------------
 // http://localhost:8000/joinedEvent/email
-app.get('/joinedEvent/:email', async (req, res) => {
+app.get('/joinedEvent/:email',verifyToken, async (req, res) => {
   const email = req.params.email
-
-  try {
-    const result = await joinEventDataCollection.find({ userEmail: email }).toArray()
-    res.send(result)
-  } catch (error) {
-    console.error('Failed to load joined events for email:', error)
-    res.status(500).send({ message: 'Failed to load joined events' })
-  }
+  const result = await joinEventDataCollection.find({ userEmail: email }).toArray()
+  res.send(result)
 })
 
 
