@@ -71,7 +71,7 @@ app.post('/form-datas', async (req, res) => {
 
 // ------------------------------
 // http://localhost:8000/allEvents
-app.get('/allEvents', verifyApi, async (req, res) => {
+app.get('/allEvents', async (req, res) => {
   const result = await eventDataCollection.find().toArray()
   res.send(result)
 })
@@ -85,7 +85,7 @@ app.get('/featured-allEvents', async (req, res) => {
 
 // --------------------------
 // http://localhost:8000/allEvents/id
-app.get('/allEvents/:id', verifyApi, async (req, res) => {
+app.get('/allEvents/:id',  async (req, res) => {
   const id = req.params.id
   const query = { _id: new ObjectId(id) }
   const result = await eventDataCollection.findOne(query)
